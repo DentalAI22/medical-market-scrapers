@@ -1,0 +1,70 @@
+# Medical / physician-practice listings scraper — scheduled aggregation.
+#
+# Network's FIFTH scraper vertical (after dental, veterinary, accounting,
+# optometry). Runs ONCE DAILY (09:30 UTC) — staggered off dental (08:30), vet
+# (08:30), accounting (09:00), and optometry (09:15) to spread load. Do NOT
+# restore any q3h cron: multiple daily verticals at q3h blows the 2,000 free
+# Linux-min/mo GitHub Actions ceiling shared per-account (see
+# NETWORK-BUILDOUT-AND-RUNCOST.md). Daily is the network standard.
+#
+# HOSTED PUBLIC at DentalAI22/medical-market-scrapers -> GitHub Actions minutes
+# are unlimited/free for public repos. The job pushes back with the default
+# GITHUB_TOKEN (permissions.contents: write) — no PAT needed.
+#
+# Mirrors the optometry/accounting/vet/dental pattern: checkout -> install deps
+# -> run scrapers -> normalize -> commit the updated dataset back to THIS repo.
+# The SITE repos (medical / medicalpractice) PULL listings.json from this repo's
+# public raw URL at build time — no cross-repo push credentials.
+
+name: Scrape Medical Listings
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "30 9 * * *"    # daily full refresh at 09:30 UTC (free-tier-safe; staggered off optometry 09:15)
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run scrapers + normalize
+        run: python run_all.py
+
+      - name: Sanity-check dataset (guard the live source of truth)
+        # The live sites PULL this listings.json at build time, so a collapsed
+        # scrape (runner IP blocked -> empty CSVs) must NOT be committed or it
+        # would wipe the sites on their next build. Fail loudly and keep the
+        # last-good committed dataset. Medical is a dense vertical (~70-90
+        # active), so a floor of 20 only trips on a broad multi-source collapse
+        # while letting real single-source churn still flow.
+        run: |
+          COUNT=$(python -c "import json;print(len(json.load(open('listings.json'))))")
+          echo "listings.json contains $COUNT listings"
+          if [ "$COUNT" -lt 20 ]; then
+            echo "::error::Dataset collapsed to $COUNT listings (<20) — refusing to commit; keeping last-good."
+            exit 1
+          fi
+
+      - name: Commit refreshed dataset
+        run: |
+          git config user.name  "medical-scraper-bot"
+          git config user.email "jonathan@tdibroker.com"
+          git add listings.json output/*.csv site_id_registry.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(medical): refresh listings $(date -u +%Y-%m-%dT%H:%MZ)"
+            git pull --rebase origin main && git push
+          else
+            echo "No listing changes."
+          fi

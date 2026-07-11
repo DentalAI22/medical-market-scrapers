@@ -1,0 +1,44 @@
+{
+  "_README": "Medical / physician-practice broker source registry. Mirrors the optometry TOM rig and dental TDPM broker_codes.json pattern. site_prefix TMM = The Medical (Practice) Market (feeds themedicalpracticemarket.com + a medicalpractice sibling if built). NEVER collides with dental's TDPM-, veterinary's TVM-, accounting's TAM-, or optometry's TOM-. 'ref_prefix' is the source-scoped broker reference shown muted on cards. 'aggregator: true' sources are treated like the blocked aggregators and purged by the normalizer.",
+  "site_prefix": "TMM",
+  "sources": {
+    "tinsley": {
+      "broker_name": "Tinsley Medical Practice Brokers",
+      "broker_url": "https://tinsleymedicalpracticebrokers.com/listings/",
+      "ref_prefix": "TIN",
+      "aggregator": false
+    },
+    "strategic": {
+      "broker_name": "Strategic Medical Brokers",
+      "broker_url": "https://strategicmedicalbrokers.com/browse-listings/",
+      "ref_prefix": "SMB",
+      "aggregator": false
+    },
+    "doctorsbroker": {
+      "broker_name": "Doctors Broker (Medical Practice Brokers)",
+      "broker_url": "https://doctorsbroker.com/medical-practices",
+      "ref_prefix": "DMB",
+      "aggregator": false
+    },
+    "synergy": {
+      "broker_name": "Synergy Business Brokers",
+      "broker_url": "https://synergybb.com/businesses-for-sale/medical-practices-for-sale/",
+      "ref_prefix": "SYN",
+      "aggregator": false
+    }
+  },
+  "rejected_sources": {
+    "_note": "Verified live but NOT used, with the honest reason. Documented so a future pass doesn't re-litigate them.",
+    "americanhealthcarecapital": "Real primary M&A advisor with ~10 public deals, BUT they are PE/platform-scale ($5M+ EBITDA, roll-ups) and location is mostly 'Not Disclosed'. A location-first practice marketplace can't place them on a state map. Revisit if we add a 'platform deals' tier.",
+    "vertess": "Healthcare M&A advisor; 404s / bot-blocks a plain HTTP fetch (JS-rendered), region-only teasers, platform-scale. Needs a headless browser for little yield. Skip.",
+    "practicetransitionsgroup": "Primary broker BUT mostly DENTAL; only ~7 medical/med-spa of ~19. Revisit if we widen the medical scope or spin a med-spa sub-niche skin.",
+    "medicalpracticelistings": "medicalpracticelistings.com is a parked/for-sale domain (redirects to Afternic). Not a live source. Use strategicmedicalbrokers.com instead.",
+    "firstmedtransitions": "1st Med Transitions — real broker but its MEDICAL page is ~empty (1 active); its volume is dental. Skip for medical.",
+    "transitionconsultants": "transitionconsultants.com — ~4 active medical; its long archive is mostly SOLD/off-market. Too thin to justify a module.",
+    "carrhealthcare": "CARR is healthcare COMMERCIAL REAL ESTATE (tenant/buyer rep) — does not list practices-as-businesses. Exclude."
+  },
+  "blocked_aggregators": [
+    "bizbuysell", "bizquest", "loopnet", "dealstream", "businessbroker",
+    "practiceorbit", "provide", "tusk", "sunbelt", "transworld"
+  ]
+}
