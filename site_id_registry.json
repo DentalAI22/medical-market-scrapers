@@ -1,7 +1,7 @@
 {
   "prefix": "TMM",
   "base": 1,
-  "next_id": 122,
+  "next_id": 124,
   "map": {
     "doctorsbroker-turnkey-podiatric-practice-in-virginia-beach-va": 1,
     "doctorsbroker-solo-interventional-pain-management-practice-in-woodbury-new": 2,
@@ -123,6 +123,8 @@
     "synergy-cardiology-practice-well-established-30-years-al": 118,
     "synergy-premier-interventional-pain-management-practice-co": 119,
     "tinsley-established-gynecology-practice-massachusetts": 120,
-    "tinsley-pulmonary-sleep-internal-medicine-practice-southern-californ": 121
+    "tinsley-pulmonary-sleep-internal-medicine-practice-southern-californ": 121,
+    "strategic-turnkey-orange-county-endocrinology-practice-owner-light-ret": 122,
+    "tinsley-independent-diagnostic-imaging-center-transferable-con": 123
   }
 }
